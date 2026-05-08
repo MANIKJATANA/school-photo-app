@@ -26,3 +26,7 @@ Where:
 2026-05-08T08:45:08Z phase1-slice1-foundations plan iter 2 spec-revised add Clocks.now() static facade for lifecycle hooks
 2026-05-08T08:46:07Z phase1-slice1-foundations impl iter 2 diff-produced fixed 5xx leak, added Clocks.now(), tightened tests; 17/17 unit pass
 2026-05-08T08:48:21Z phase1-slice1-foundations review iter 2 APPROVED 0:0:1
+2026-05-08T09:02:31Z phase1-slice2a-school-and-user plan iter 1 spec-written 8 src + 2 test files; entities only, no auth wiring
+2026-05-08T09:04:59Z phase1-slice2a-school-and-user impl iter 1 diff-produced 8 src + 2 test files; 21/21 runnable pass, 5 Docker-skipped
+2026-05-08T09:06:56Z phase1-slice2a-school-and-user review iter 1 APPROVED 0:0:1
+2026-05-08T09:07:30Z phase1-slice2a-school-and-user review iter 1 APPROVED 0:0:1
