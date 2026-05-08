@@ -5,11 +5,9 @@ import com.example.photoapp.domain.user.AppUser;
 import com.example.photoapp.domain.user.UserStatus;
 import com.example.photoapp.repository.user.AppUserRepository;
 import com.example.photoapp.security.Principal;
-import com.example.photoapp.security.jwt.AppToken;
-import com.example.photoapp.security.jwt.JwtIssuer;
 import com.example.photoapp.security.jwt.JwtVerifier;
+import com.example.photoapp.security.jwt.TokenMinter;
 import com.example.photoapp.web.auth.AuthDtos.LoginRequest;
-import com.example.photoapp.web.auth.AuthDtos.MeResponse;
 import com.example.photoapp.web.auth.AuthDtos.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +29,18 @@ public class AuthService {
 
     private final AppUserRepository users;
     private final PasswordEncoder passwordEncoder;
-    private final JwtIssuer issuer;
     private final JwtVerifier verifier;
+    private final TokenMinter tokenMinter;
     private final String dummyHash;
 
     public AuthService(AppUserRepository users,
                        PasswordEncoder passwordEncoder,
-                       JwtIssuer issuer,
-                       JwtVerifier verifier) {
+                       JwtVerifier verifier,
+                       TokenMinter tokenMinter) {
         this.users = users;
         this.passwordEncoder = passwordEncoder;
-        this.issuer = issuer;
         this.verifier = verifier;
+        this.tokenMinter = tokenMinter;
         // Generate a real, validly-formatted hash from the same encoder so password verification
         // for unknown users runs the full BCrypt cost. Using a literal string risks malformed
         // hashes that BCryptPasswordEncoder short-circuits on (returning false in microseconds
@@ -62,8 +60,7 @@ public class AuthService {
         }
 
         log.info("login ok user={} school={}", user.getId(), user.getSchoolId());
-        Principal principal = new Principal(user.getId(), user.getSchoolId(), user.getRole());
-        return mintPair(principal);
+        return tokenMinter.mintPair(new Principal(user.getId(), user.getSchoolId(), user.getRole()));
     }
 
     public TokenResponse refresh(String refreshToken) {
@@ -76,17 +73,6 @@ public class AuthService {
             throw new Errors.Unauthorized("Invalid credentials");
         }
 
-        Principal principal = new Principal(user.getId(), user.getSchoolId(), user.getRole());
-        return mintPair(principal);
-    }
-
-    private TokenResponse mintPair(Principal principal) {
-        AppToken access = issuer.issueAccess(principal);
-        AppToken refresh = issuer.issueRefresh(principal);
-        MeResponse me = new MeResponse(principal.userId(), principal.schoolId(), principal.role());
-        return new TokenResponse(
-                access.token(), access.expiresAt(),
-                refresh.token(), refresh.expiresAt(),
-                me);
+        return tokenMinter.mintPair(new Principal(user.getId(), user.getSchoolId(), user.getRole()));
     }
 }

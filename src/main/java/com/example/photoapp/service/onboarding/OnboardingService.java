@@ -8,10 +8,8 @@ import com.example.photoapp.domain.user.Role;
 import com.example.photoapp.repository.event.EventRepository;
 import com.example.photoapp.repository.school.SchoolRepository;
 import com.example.photoapp.security.Principal;
-import com.example.photoapp.security.jwt.AppToken;
-import com.example.photoapp.security.jwt.JwtIssuer;
+import com.example.photoapp.security.jwt.TokenMinter;
 import com.example.photoapp.service.provisioning.UserProvisioning;
-import com.example.photoapp.web.auth.AuthDtos.MeResponse;
 import com.example.photoapp.web.auth.AuthDtos.TokenResponse;
 import com.example.photoapp.web.onboarding.OnboardingDtos.CreateSchoolRequest;
 import com.example.photoapp.web.onboarding.OnboardingDtos.OnboardingResponse;
@@ -39,18 +37,18 @@ public class OnboardingService {
     private final SchoolRepository schools;
     private final UserProvisioning userProvisioning;
     private final EventRepository events;
-    private final JwtIssuer issuer;
+    private final TokenMinter tokenMinter;
     private final byte[] expectedKeyBytes;
 
     public OnboardingService(SchoolRepository schools,
                              UserProvisioning userProvisioning,
                              EventRepository events,
-                             JwtIssuer issuer,
+                             TokenMinter tokenMinter,
                              @Value("${photoapp.onboarding.key}") String onboardingKey) {
         this.schools = schools;
         this.userProvisioning = userProvisioning;
         this.events = events;
-        this.issuer = issuer;
+        this.tokenMinter = tokenMinter;
         this.expectedKeyBytes = onboardingKey.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -76,8 +74,8 @@ public class OnboardingService {
         log.info("onboarded school={} admin={} default_event={}",
                 school.getId(), admin.getId(), defaultEvent.getId());
 
-        Principal principal = new Principal(admin.getId(), school.getId(), admin.getRole());
-        TokenResponse tokens = mintTokens(principal);
+        TokenResponse tokens = tokenMinter.mintPair(
+                new Principal(admin.getId(), school.getId(), admin.getRole()));
 
         return new OnboardingResponse(school.getId(), admin.getId(), defaultEvent.getId(), tokens);
     }
@@ -92,15 +90,5 @@ public class OnboardingService {
             log.warn("onboarding rejected: invalid key");
             throw new Errors.Forbidden("Invalid onboarding key");
         }
-    }
-
-    private TokenResponse mintTokens(Principal principal) {
-        AppToken access = issuer.issueAccess(principal);
-        AppToken refresh = issuer.issueRefresh(principal);
-        MeResponse me = new MeResponse(principal.userId(), principal.schoolId(), principal.role());
-        return new TokenResponse(
-                access.token(), access.expiresAt(),
-                refresh.token(), refresh.expiresAt(),
-                me);
     }
 }

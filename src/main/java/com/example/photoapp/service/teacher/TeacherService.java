@@ -1,8 +1,8 @@
 package com.example.photoapp.service.teacher;
 
 import com.example.photoapp.common.error.Errors;
-import com.example.photoapp.common.pagination.CursorCodec;
 import com.example.photoapp.common.pagination.CursorPage;
+import com.example.photoapp.common.pagination.CursorPaginator;
 import com.example.photoapp.common.school.SchoolScopes;
 import com.example.photoapp.domain.teacher.Teacher;
 import com.example.photoapp.domain.user.AppUser;
@@ -15,36 +15,30 @@ import com.example.photoapp.web.dto.TeacherDtos.UpdateTeacherRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class TeacherService {
 
     private static final Logger log = LoggerFactory.getLogger(TeacherService.class);
-    static final int DEFAULT_LIMIT = 50;
-    static final int MAX_LIMIT = 200;
 
     private final TeacherRepository teachers;
     private final UserProvisioning userProvisioning;
-    private final CursorCodec cursorCodec;
+    private final CursorPaginator paginator;
     private final Clock clock;
 
     public TeacherService(TeacherRepository teachers,
                           UserProvisioning userProvisioning,
-                          CursorCodec cursorCodec,
+                          CursorPaginator paginator,
                           Clock clock) {
         this.teachers = teachers;
         this.userProvisioning = userProvisioning;
-        this.cursorCodec = cursorCodec;
+        this.paginator = paginator;
         this.clock = clock;
     }
 
@@ -68,32 +62,12 @@ public class TeacherService {
 
     @Transactional(readOnly = true)
     public CursorPage<TeacherResponse> list(UUID schoolId, String cursor, Integer requestedLimit) {
-        int limit = clampLimit(requestedLimit);
-        CursorCodec.Cursor decoded = cursorCodec.decode(cursor);
-
-        Specification<Teacher> spec = SchoolScopes.<Teacher>activeInSchool(schoolId);
-        if (decoded != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.lessThan(root.get("createdAt"), decoded.sortKey()),
-                    cb.and(
-                            cb.equal(root.get("createdAt"), decoded.sortKey()),
-                            cb.lessThan(root.get("id"), decoded.id()))));
-        }
-
-        var page = teachers.findAll(
-                spec,
-                PageRequest.of(0, limit + 1,
-                        Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))));
-        List<Teacher> rows = page.getContent();
-        boolean hasMore = rows.size() > limit;
-        List<Teacher> trimmed = hasMore ? rows.subList(0, limit) : rows;
-
-        String nextCursor = null;
-        if (hasMore) {
-            Teacher last = trimmed.get(trimmed.size() - 1);
-            nextCursor = cursorCodec.encode(new CursorCodec.Cursor(last.getCreatedAt(), last.getId()));
-        }
-        return CursorPage.of(trimmed.stream().map(TeacherService::toResponse).toList(), nextCursor, limit);
+        return paginator.paginate(
+                teachers,
+                SchoolScopes.activeInSchool(schoolId),
+                cursor, requestedLimit,
+                TEACHER_KEYS,
+                TeacherService::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -134,11 +108,10 @@ public class TeacherService {
         return t;
     }
 
-    private static int clampLimit(Integer requested) {
-        if (requested == null) return DEFAULT_LIMIT;
-        if (requested < 1)     throw new Errors.BadRequest("limit must be >= 1");
-        return Math.min(requested, MAX_LIMIT);
-    }
+    private static final CursorPaginator.RowKeys<Teacher> TEACHER_KEYS = new CursorPaginator.RowKeys<>() {
+        @Override public Instant createdAt(Teacher t) { return t.getCreatedAt(); }
+        @Override public UUID id(Teacher t)            { return t.getId(); }
+    };
 
     private static TeacherResponse toResponse(Teacher t) {
         return new TeacherResponse(

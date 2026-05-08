@@ -2,8 +2,8 @@ package com.example.photoapp.service.student;
 
 import com.example.photoapp.common.error.Errors;
 import com.example.photoapp.common.pagination.Base64CursorCodec;
-import com.example.photoapp.common.pagination.CursorCodec;
 import com.example.photoapp.common.pagination.CursorPage;
+import com.example.photoapp.common.pagination.CursorPaginator;
 import com.example.photoapp.domain.student.FaceEmbeddingStatus;
 import com.example.photoapp.domain.student.Student;
 import com.example.photoapp.domain.user.AppUser;
@@ -49,14 +49,14 @@ class StudentServiceTest {
 
     private StudentRepository repo;
     private UserProvisioning provisioning;
-    private CursorCodec cursorCodec;
+    private CursorPaginator paginator;
     private StudentService service;
 
     @BeforeEach
     void setUp() {
         repo = mock(StudentRepository.class);
         provisioning = mock(UserProvisioning.class);
-        cursorCodec = new Base64CursorCodec();
+        paginator = new CursorPaginator(new Base64CursorCodec());
 
         AppUser provisioned = new AppUser(SCHOOL_A, "x@y.test", "h", Role.STUDENT);
         setId(provisioned, NEW_USER_ID);
@@ -74,7 +74,7 @@ class StudentServiceTest {
             return s;
         });
 
-        service = new StudentService(repo, provisioning, cursorCodec, CLOCK);
+        service = new StudentService(repo, provisioning, paginator, CLOCK);
     }
 
     @Test
@@ -143,7 +143,7 @@ class StudentServiceTest {
 
         CursorPage<StudentResponse> page = service.list(SCHOOL_A, null, 99999);
 
-        assertThat(page.limit()).isEqualTo(StudentService.MAX_LIMIT);
+        assertThat(page.limit()).isEqualTo(CursorPaginator.MAX_LIMIT);
     }
 
     @Test
@@ -198,6 +198,21 @@ class StudentServiceTest {
         assertThat(resp.lastName()).isEqualTo("Name");                  // unchanged
         assertThat(resp.rollNumber()).isEqualTo("ROLL-1");              // unchanged
         assertThat(resp.dateOfBirth()).isEqualTo(LocalDate.parse("2010-01-01")); // unchanged
+    }
+
+    @Test
+    void update_translates_duplicate_roll_number_to_conflict() {
+        UUID id = UUID.randomUUID();
+        Student s = student(SCHOOL_A, "F", "L", Instant.now());
+        setId(s, id);
+        when(repo.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.of(s));
+        doThrow(new DataIntegrityViolationException("uq_student_school_roll_number"))
+                .when(repo).saveAndFlush(any());
+
+        assertThatThrownBy(() -> service.update(SCHOOL_A, id,
+                new UpdateStudentRequest(null, null, "DUP-ROLL", null), ADMIN_ID))
+                .isInstanceOf(Errors.Conflict.class)
+                .hasMessageContaining("roll_number");
     }
 
     @Test

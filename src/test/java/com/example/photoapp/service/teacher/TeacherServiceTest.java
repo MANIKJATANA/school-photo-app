@@ -2,8 +2,8 @@ package com.example.photoapp.service.teacher;
 
 import com.example.photoapp.common.error.Errors;
 import com.example.photoapp.common.pagination.Base64CursorCodec;
-import com.example.photoapp.common.pagination.CursorCodec;
 import com.example.photoapp.common.pagination.CursorPage;
+import com.example.photoapp.common.pagination.CursorPaginator;
 import com.example.photoapp.domain.teacher.Teacher;
 import com.example.photoapp.domain.user.AppUser;
 import com.example.photoapp.domain.user.Role;
@@ -47,14 +47,14 @@ class TeacherServiceTest {
 
     private TeacherRepository repo;
     private UserProvisioning provisioning;
-    private CursorCodec cursorCodec;
+    private CursorPaginator paginator;
     private TeacherService service;
 
     @BeforeEach
     void setUp() {
         repo = mock(TeacherRepository.class);
         provisioning = mock(UserProvisioning.class);
-        cursorCodec = new Base64CursorCodec();
+        paginator = new CursorPaginator(new Base64CursorCodec());
 
         AppUser provisioned = new AppUser(SCHOOL_A, "x@y.test", "h", Role.TEACHER);
         setId(provisioned, NEW_USER_ID);
@@ -71,7 +71,7 @@ class TeacherServiceTest {
             return t;
         });
 
-        service = new TeacherService(repo, provisioning, cursorCodec, CLOCK);
+        service = new TeacherService(repo, provisioning, paginator, CLOCK);
     }
 
     @Test
@@ -144,7 +144,7 @@ class TeacherServiceTest {
 
         CursorPage<TeacherResponse> page = service.list(SCHOOL_A, null, 99999);
 
-        assertThat(page.limit()).isEqualTo(TeacherService.MAX_LIMIT);
+        assertThat(page.limit()).isEqualTo(CursorPaginator.MAX_LIMIT);
     }
 
     @Test

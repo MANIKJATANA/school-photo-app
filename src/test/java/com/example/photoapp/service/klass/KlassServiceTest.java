@@ -2,8 +2,8 @@ package com.example.photoapp.service.klass;
 
 import com.example.photoapp.common.error.Errors;
 import com.example.photoapp.common.pagination.Base64CursorCodec;
-import com.example.photoapp.common.pagination.CursorCodec;
 import com.example.photoapp.common.pagination.CursorPage;
+import com.example.photoapp.common.pagination.CursorPaginator;
 import com.example.photoapp.domain.klass.Klass;
 import com.example.photoapp.repository.klass.KlassRepository;
 import com.example.photoapp.web.dto.KlassDtos.ClassResponse;
@@ -41,13 +41,13 @@ class KlassServiceTest {
     private static final Clock CLOCK = Clock.fixed(Instant.parse("2030-06-01T00:00:00Z"), ZoneOffset.UTC);
 
     private KlassRepository repo;
-    private CursorCodec cursorCodec;
+    private CursorPaginator paginator;
     private KlassService service;
 
     @BeforeEach
     void setUp() {
         repo = mock(KlassRepository.class);
-        cursorCodec = new Base64CursorCodec();
+        paginator = new CursorPaginator(new Base64CursorCodec());
 
         when(repo.save(any())).thenAnswer(inv -> {
             Klass k = inv.getArgument(0);
@@ -60,7 +60,7 @@ class KlassServiceTest {
             return k;
         });
 
-        service = new KlassService(repo, cursorCodec, CLOCK);
+        service = new KlassService(repo, paginator, CLOCK);
     }
 
     @Test
@@ -126,7 +126,7 @@ class KlassServiceTest {
 
         CursorPage<ClassResponse> page = service.list(SCHOOL_A, null, 99999);
 
-        assertThat(page.limit()).isEqualTo(KlassService.MAX_LIMIT);
+        assertThat(page.limit()).isEqualTo(CursorPaginator.MAX_LIMIT);
     }
 
     @Test

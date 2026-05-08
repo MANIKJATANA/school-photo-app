@@ -53,7 +53,7 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         repo = mock(AppUserRepository.class);
-        auth = new AuthService(repo, encoder, issuer, verifier);
+        auth = new AuthService(repo, encoder, verifier, new com.example.photoapp.security.jwt.TokenMinter(issuer));
     }
 
     @Test

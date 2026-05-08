@@ -1,8 +1,8 @@
 package com.example.photoapp.service.student;
 
 import com.example.photoapp.common.error.Errors;
-import com.example.photoapp.common.pagination.CursorCodec;
 import com.example.photoapp.common.pagination.CursorPage;
+import com.example.photoapp.common.pagination.CursorPaginator;
 import com.example.photoapp.common.school.SchoolScopes;
 import com.example.photoapp.domain.student.Student;
 import com.example.photoapp.domain.user.AppUser;
@@ -15,36 +15,30 @@ import com.example.photoapp.web.dto.StudentDtos.UpdateStudentRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class StudentService {
 
     private static final Logger log = LoggerFactory.getLogger(StudentService.class);
-    static final int DEFAULT_LIMIT = 50;
-    static final int MAX_LIMIT = 200;
 
     private final StudentRepository students;
     private final UserProvisioning userProvisioning;
-    private final CursorCodec cursorCodec;
+    private final CursorPaginator paginator;
     private final Clock clock;
 
     public StudentService(StudentRepository students,
                           UserProvisioning userProvisioning,
-                          CursorCodec cursorCodec,
+                          CursorPaginator paginator,
                           Clock clock) {
         this.students = students;
         this.userProvisioning = userProvisioning;
-        this.cursorCodec = cursorCodec;
+        this.paginator = paginator;
         this.clock = clock;
     }
 
@@ -70,32 +64,12 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public CursorPage<StudentResponse> list(UUID schoolId, String cursor, Integer requestedLimit) {
-        int limit = clampLimit(requestedLimit);
-        CursorCodec.Cursor decoded = cursorCodec.decode(cursor);
-
-        Specification<Student> spec = SchoolScopes.<Student>activeInSchool(schoolId);
-        if (decoded != null) {
-            spec = spec.and((root, q, cb) -> cb.or(
-                    cb.lessThan(root.get("createdAt"), decoded.sortKey()),
-                    cb.and(
-                            cb.equal(root.get("createdAt"), decoded.sortKey()),
-                            cb.lessThan(root.get("id"), decoded.id()))));
-        }
-
-        var page = students.findAll(
-                spec,
-                PageRequest.of(0, limit + 1,
-                        Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))));
-        List<Student> rows = page.getContent();
-        boolean hasMore = rows.size() > limit;
-        List<Student> trimmed = hasMore ? rows.subList(0, limit) : rows;
-
-        String nextCursor = null;
-        if (hasMore) {
-            Student last = trimmed.get(trimmed.size() - 1);
-            nextCursor = cursorCodec.encode(new CursorCodec.Cursor(last.getCreatedAt(), last.getId()));
-        }
-        return CursorPage.of(trimmed.stream().map(StudentService::toResponse).toList(), nextCursor, limit);
+        return paginator.paginate(
+                students,
+                SchoolScopes.activeInSchool(schoolId),
+                cursor, requestedLimit,
+                STUDENT_KEYS,
+                StudentService::toResponse);
     }
 
     @Transactional(readOnly = true)
@@ -110,7 +84,11 @@ public class StudentService {
         if (req.lastName() != null)    s.setLastName(req.lastName());
         if (req.rollNumber() != null)  s.setRollNumber(req.rollNumber());
         if (req.dateOfBirth() != null) s.setDateOfBirth(req.dateOfBirth());
-        students.save(s);
+        try {
+            students.saveAndFlush(s);
+        } catch (DataIntegrityViolationException e) {
+            throw new Errors.Conflict("A student with that roll_number already exists in this school");
+        }
         log.info("student updated id={} school={} actor={}", id, schoolId, actorUserId);
         return toResponse(s);
     }
@@ -133,11 +111,10 @@ public class StudentService {
         return s;
     }
 
-    private static int clampLimit(Integer requested) {
-        if (requested == null) return DEFAULT_LIMIT;
-        if (requested < 1)     throw new Errors.BadRequest("limit must be >= 1");
-        return Math.min(requested, MAX_LIMIT);
-    }
+    private static final CursorPaginator.RowKeys<Student> STUDENT_KEYS = new CursorPaginator.RowKeys<>() {
+        @Override public Instant createdAt(Student s) { return s.getCreatedAt(); }
+        @Override public UUID id(Student s)            { return s.getId(); }
+    };
 
     private static StudentResponse toResponse(Student s) {
         return new StudentResponse(

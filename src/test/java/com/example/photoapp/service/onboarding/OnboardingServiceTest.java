@@ -78,7 +78,8 @@ class OnboardingServiceTest {
             return e;
         });
 
-        onboarding = new OnboardingService(schools, userProvisioning, events, issuer, VALID_KEY);
+        onboarding = new OnboardingService(schools, userProvisioning, events,
+                new com.example.photoapp.security.jwt.TokenMinter(issuer), VALID_KEY);
     }
 
     @Test
