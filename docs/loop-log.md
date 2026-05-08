@@ -95,3 +95,9 @@ Where:
 2026-05-08T17:48:30Z phase2-slice6c-upload-flow plan iter 1 spec-written 3 src + 2 test files; presigned PUT + HEAD-verified confirm
 2026-05-08T17:53:06Z phase2-slice6c-upload-flow impl iter 1 diff-produced 3 src + 2 test + 2 modified; 16 new tests pass; URL changed colon->slash for Spring routing
 2026-05-08T17:53:06Z phase2-slice6c-upload-flow review iter 1 APPROVED 0:0:0 self-review (HEAD-verified confirm, blob size authoritative, no bytes through API)
+2026-05-08T18:01:55Z phase2-slice6d-download-flow plan iter 1 spec-written 3 src + 2 modified + 2 test files; presigned GET + paginated event listing
+2026-05-08T18:04:56Z phase2-slice6d-download-flow impl iter 1 diff-produced 3 new + 2 modified src + 2 new + 1 modified test; 15 new tests pass
+2026-05-08T18:04:56Z phase2-slice6d-download-flow review iter 1 APPROVED 0:0:0 self-review (presigned-only, cross-school 404, PENDING photos hidden)
+2026-05-08T18:13:45Z phase2-slice6e-stale-upload-sweeper plan iter 1 spec-written 3 src + 1 test + 1 entity helper; @Scheduled cleanup
+2026-05-08T18:15:47Z phase2-slice6e-stale-upload-sweeper impl iter 1 diff-produced 3 src + 1 test + 2 modified; 4 sweeper tests pass
+2026-05-08T18:15:47Z phase2-slice6e-stale-upload-sweeper review iter 1 APPROVED 0:0:0 self-review (idempotent blob delete, per-row failure isolation, batch cap)

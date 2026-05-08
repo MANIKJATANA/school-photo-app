@@ -45,13 +45,17 @@ class PhotoControllerTest {
             .findAndRegisterModules()
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+    private com.example.photoapp.service.photo.PhotoQueryService queries;
+
     @BeforeEach
     void setUp() {
         service = mock(PhotoUploadService.class);
+        queries = mock(com.example.photoapp.service.photo.PhotoQueryService.class);
         schoolContext = mock(SchoolContext.class);
         when(schoolContext.requirePrincipal()).thenReturn(new Principal(ACTOR, SCHOOL, Role.ADMIN));
+        when(schoolContext.requireSchoolId()).thenReturn(SCHOOL);
 
-        PhotoController controller = new PhotoController(service, schoolContext);
+        PhotoController controller = new PhotoController(service, queries, schoolContext);
         mvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new Errors.GlobalHandler())
                 .build();
@@ -137,6 +141,35 @@ class PhotoControllerTest {
                 .thenThrow(new Errors.NotFound("Blob not found"));
 
         MvcResult r = mvc.perform(post("/api/v1/photos/" + PHOTO + "/confirm-upload")).andReturn();
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    void get_url_returns_200_with_presigned_url() throws Exception {
+        when(queries.getPresignedUrl(SCHOOL, PHOTO))
+                .thenReturn(new com.example.photoapp.web.dto.PhotoDtos.PhotoUrlResponse(
+                        URI.create("https://s3.example/key?sig=abc"),
+                        Instant.parse("2030-01-01T00:05:00Z")));
+
+        MvcResult r = mvc.perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(
+                        "/api/v1/photos/" + PHOTO + "/url")).andReturn();
+
+        assertThat(r.getResponse().getStatus()).isEqualTo(200);
+        JsonNode body = json.readTree(r.getResponse().getContentAsString());
+        assertThat(body.get("url").asText()).startsWith("https://");
+        assertThat(body.get("expiresAt").asText()).isNotBlank();
+    }
+
+    @Test
+    void get_url_returns_404_on_miss() throws Exception {
+        when(queries.getPresignedUrl(SCHOOL, PHOTO))
+                .thenThrow(new Errors.NotFound("photo", PHOTO));
+
+        MvcResult r = mvc.perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(
+                        "/api/v1/photos/" + PHOTO + "/url")).andReturn();
 
         assertThat(r.getResponse().getStatus()).isEqualTo(404);
     }

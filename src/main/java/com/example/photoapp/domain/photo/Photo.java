@@ -131,6 +131,16 @@ public class Photo {
         this.sizeBytes = actualSizeBytes;
     }
 
+    /**
+     * Marks a stale {@code PENDING} upload as failed and soft-deletes the row.
+     * Called by the stale-upload sweeper for rows whose initiate-upload was
+     * never followed by a successful confirm-upload.
+     */
+    public void markFailed(Instant when) {
+        this.uploadStatus = UploadStatus.FAILED;
+        this.deletedAt = when;
+    }
+
     public PhotoId getPk()       { return id; }
     public UUID    getId()       { return id.id(); }
     public UUID    getEventId()  { return id.eventId(); }

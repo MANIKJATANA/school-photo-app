@@ -38,4 +38,18 @@ public final class PhotoDtos {
             MlStatus mlStatus,
             Instant createdAt,
             Instant updatedAt) {}
+
+    public record PhotoUrlResponse(URI url, Instant expiresAt) {}
+
+    public record PhotoListItem(
+            UUID photoId,
+            UUID eventId,
+            String contentType,
+            long sizeBytes,
+            Integer widthPx,
+            Integer heightPx,
+            Instant takenAt,
+            URI getUrl,
+            Instant urlExpiresAt,
+            Instant createdAt) {}
 }
