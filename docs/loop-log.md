@@ -19,3 +19,10 @@ Where:
 ## Entries
 
 <!-- agents append here -->
+2026-05-08T08:38:15Z phase1-slice1-foundations plan iter 1 spec-written 7 utilities + base entity + cursor + scope helpers, no schema
+2026-05-08T08:42:05Z phase1-slice1-foundations impl iter 1 diff-produced 9 src + 3 test files; tests 16/16 pass
+2026-05-08T08:44:25Z phase1-slice1-foundations review iter 1 CHANGES_REQUESTED 0:2:3
+2026-05-08T08:45:08Z phase1-slice1-foundations review iter 1 CHANGES_REQUESTED 0:2:3
+2026-05-08T08:45:08Z phase1-slice1-foundations plan iter 2 spec-revised add Clocks.now() static facade for lifecycle hooks
+2026-05-08T08:46:07Z phase1-slice1-foundations impl iter 2 diff-produced fixed 5xx leak, added Clocks.now(), tightened tests; 17/17 unit pass
+2026-05-08T08:48:21Z phase1-slice1-foundations review iter 2 APPROVED 0:0:1

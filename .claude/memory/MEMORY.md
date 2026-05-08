@@ -2,3 +2,5 @@
 - [Plan-implement-review loop default](feedback_implement_review_loop.md) — Implementation runs through a three-agent planner→implementer→reviewer loop, with abstraction-first design baked in
 - [Personal GitHub only](feedback_personal_github_only.md) — All git/GitHub work goes through MANIKJATANA (personal), never the work account
 - [No "tenant" wording](feedback_no_tenant_wording.md) — Scope is `school_id` directly; no "tenant" / "multi-tenant" / "TenantContext" anywhere
+- [Single error file](feedback_single_error_file.md) — All exceptions + global handler in `common/error/Errors.java` as nested classes; never one-class-per-exception files
+- [DRY via utils](feedback_dry_utils.md) — Shared logic (ids, time, cursors, scopes, audit, mappers) lives in named `common/` utilities; services compose, never duplicate
