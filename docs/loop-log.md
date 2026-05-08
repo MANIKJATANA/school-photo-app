@@ -64,3 +64,7 @@ Where:
 2026-05-08T13:38:32Z phase1-slice4d-klass-crud plan iter 1 spec-written 3 src + 2 test files; mirrors teacher CRUD minus user provisioning
 2026-05-08T13:40:31Z phase1-slice4d-klass-crud impl iter 1 diff-produced 3 src + 2 test files; 19 new tests pass
 2026-05-08T13:43:00Z phase1-slice4d-klass-crud review iter 1 APPROVED 0:0:0
+2026-05-08T13:54:30Z phase1-slice5a-student-enrolment plan iter 1 spec-written 5 src + 2 test files; temporal student_class with one-active invariant
+2026-05-08T13:56:30Z phase1-slice5a-student-enrolment impl iter 1 diff-produced 5 src + 2 test files; 15 new tests pass
+2026-05-08T13:58:37Z phase1-slice5a-student-enrolment review iter 1 APPROVED 0:0:0
+2026-05-08T13:59:33Z phase1-slice5a-student-enrolment review iter 1 APPROVED 0:0:0
