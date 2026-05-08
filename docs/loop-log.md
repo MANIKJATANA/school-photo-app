@@ -72,3 +72,12 @@ Where:
 2026-05-08T14:35:13Z phase1-slice5b-class-teacher-assignment impl iter 1 diff-produced 7 src + 2 test files; 17 new tests pass
 2026-05-08T14:38:10Z phase1-slice5b-class-teacher-assignment review iter 1 APPROVED 0:0:1
 2026-05-08T14:38:41Z phase1-slice5b-class-teacher-assignment review iter 1 APPROVED 0:0:1
+2026-05-08T14:44:09Z phase1-verification plan iter 1 spec-written 1 test file; full E2E happy path + auth boundary
+2026-05-08T14:47:28Z phase1-verification impl iter 1 diff-produced 1 test file; 5 E2E methods Docker-skipped here
+2026-05-08T14:51:44Z phase1-verification review iter 1 CHANGES_REQUESTED 1:0:2
+2026-05-08T14:54:31Z phase1-verification review iter 1 CHANGES_REQUESTED 1:0:2
+2026-05-08T14:54:31Z phase1-verification impl iter 2 diff-produced inlined ONBOARDING_KEY_HEADER, dropped unused @LocalServerPort, broadened login-failure test
+2026-05-08T14:55:38Z phase1-verification review iter 2 CHANGES_REQUESTED 0:0:2
+2026-05-08T14:56:54Z phase1-verification review iter 2 CHANGES_REQUESTED 0:0:2
+2026-05-08T14:56:54Z phase1-verification impl iter 3 diff-produced removed two stale imports
+2026-05-08T14:56:54Z phase1-verification review iter 3 APPROVED 0:0:0
