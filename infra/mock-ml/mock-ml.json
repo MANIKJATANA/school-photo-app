@@ -1,0 +1,37 @@
+{
+  "uuid": "00000000-0000-0000-0000-000000000001",
+  "name": "mock-ml",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 8081,
+  "hostname": "0.0.0.0",
+  "routes": [
+    {
+      "uuid": "10000000-0000-0000-0000-000000000001",
+      "documentation": "Accept any ML run request",
+      "method": "post",
+      "endpoint": "runs",
+      "responses": [
+        {
+          "uuid": "20000000-0000-0000-0000-000000000001",
+          "body": "{\"accepted\": true}",
+          "latency": 0,
+          "statusCode": 202,
+          "label": "",
+          "headers": [{"key": "Content-Type", "value": "application/json"}],
+          "rules": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {"enabled": false},
+  "cors": true,
+  "headers": [],
+  "proxyReqHeaders": [],
+  "proxyResHeaders": []
+}

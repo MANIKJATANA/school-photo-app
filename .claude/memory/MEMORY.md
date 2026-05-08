@@ -1,0 +1,4 @@
+- [AI scaffolding expected up front](feedback_ai_scaffolding.md) — User wants CLAUDE.md, decision log, and custom subagents created early so future sessions inherit rich context
+- [Plan-implement-review loop default](feedback_implement_review_loop.md) — Implementation runs through a three-agent planner→implementer→reviewer loop, with abstraction-first design baked in
+- [Personal GitHub only](feedback_personal_github_only.md) — All git/GitHub work goes through MANIKJATANA (personal), never the work account
+- [No "tenant" wording](feedback_no_tenant_wording.md) — Scope is `school_id` directly; no "tenant" / "multi-tenant" / "TenantContext" anywhere
