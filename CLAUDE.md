@@ -129,6 +129,16 @@ Currently saved memories (preferences for *how to work on this project*):
 
 - AI scaffolding (CLAUDE.md, ADRs, custom subagents) created up front, not retroactively.
 - Plan→implement→review three-agent loop is the default execution model for non-trivial slices.
+- Single-file errors (`common/error/Errors.java`) and DRY discipline for shared utilities.
+- Personal GitHub (MANIKJATANA) only — never the work account.
+- No "tenant" wording — scope is `school_id` directly.
+- **No auto-commit / push.** Never run `git commit` / `push` / `amend` / `force-push` / `rebase` / `reset` without an explicit user request in the same turn. Slices end with files staged or in the working tree.
+
+## Workflow rules
+
+- **Never commit or push autonomously.** Even after an APPROVED reviewer verdict, leave the changes uncommitted and hand the slice back to the user for review. The user reviews the working tree (or `git diff --staged`) and explicitly says "commit it" / "push it" before any git write happens. See `.claude/memory/feedback_no_auto_commit.md`.
+- When the user does ask for a commit, first summarise *what* will be committed (file list + scope) and *to where* (branch / remote) before running the command.
+- The same hold applies to `--amend`, `--force`, `--force-with-lease`, `git rebase`, `git reset --hard`, `git stash`, and any `gh pr` write operation.
 
 ## Custom subagents
 

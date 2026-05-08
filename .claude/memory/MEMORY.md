@@ -4,3 +4,4 @@
 - [No "tenant" wording](feedback_no_tenant_wording.md) — Scope is `school_id` directly; no "tenant" / "multi-tenant" / "TenantContext" anywhere
 - [Single error file](feedback_single_error_file.md) — All exceptions + global handler in `common/error/Errors.java` as nested classes; never one-class-per-exception files
 - [DRY via utils](feedback_dry_utils.md) — Shared logic (ids, time, cursors, scopes, audit, mappers) lives in named `common/` utilities; services compose, never duplicate
+- [No auto-commit / push](feedback_no_auto_commit.md) — Never run `git commit`/`push`/`amend`/etc. without explicit user instruction; slices end with files in the working tree for the user to review

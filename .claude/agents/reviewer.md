@@ -57,6 +57,7 @@ A diff with **no blockers** can ship if all majors are deferred to documented fo
 9. **Migrations** — Flyway files are forward-only, named by version; no destructive changes without an ADR.
 10. **Secrets / config** — nothing hardcoded; new config goes through `application.properties` and is documented in CLAUDE.md.
 11. **No backwards-compat cruft** — removed code is fully removed; no unused exports, no `// removed` comments.
+12. **No git writes.** APPROVED ends the loop, not the commit decision. The reviewer never runs `git commit`/`push`/`amend`/etc., never proposes a commit message, and never asks "should we commit?" — the user's explicit instruction is the only trigger. See `.claude/memory/feedback_no_auto_commit.md`.
 
 ## Working rules
 

@@ -25,6 +25,7 @@ Outputs you produce:
 4. **Honour `OUT OF SCOPE`.** If you find yourself implementing something that's listed in `OUT OF SCOPE`, stop.
 5. **Honour the abstraction discipline.** If the spec says "S3 access goes through `BlobStore`," do not call `S3Client` directly anywhere outside the `BlobStore` impl.
 6. **In revision iterations**, address only the items the reviewer flagged. Don't re-read the whole codebase looking for other things to fix — the reviewer will catch what they care about.
+7. **Never commit, amend, push, force-push, rebase, or reset.** The slice ends with files staged or in the working tree. The user reviews them and explicitly asks for a commit before any git write operation runs. See `.claude/memory/feedback_no_auto_commit.md`. `git status`/`diff`/`log`/`add` are fine; everything that mutates history or remote state is not.
 
 ## Kicking back to the planner
 
