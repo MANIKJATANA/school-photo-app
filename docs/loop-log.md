@@ -89,3 +89,6 @@ Where:
 2026-05-08T17:19:48Z phase2-slice6a-blobstore plan iter 1 spec-written 6 src + 2 test files; BlobStore + S3 impl + key strategy
 2026-05-08T17:23:06Z phase2-slice6a-blobstore impl iter 1 diff-produced 6 src + 2 test files; 9 unit tests pass + 4 Docker-skipped
 2026-05-08T17:23:06Z phase2-slice6a-blobstore review iter 1 APPROVED 0:0:0 self-review (interface-only spec, all S3 SDK contained in storage/s3/)
+2026-05-08T17:35:33Z phase2-slice6b-photo-entity plan iter 1 spec-written 5 src + 1 test file; entity with composite PK
+2026-05-08T17:37:05Z phase2-slice6b-photo-entity impl iter 1 diff-produced 5 src + 1 test file; 6 repo tests Docker-skipped here
+2026-05-08T17:37:05Z phase2-slice6b-photo-entity review iter 1 APPROVED 0:0:0 self-review (entity matches V1, composite PK pattern follows ClassTeacher)

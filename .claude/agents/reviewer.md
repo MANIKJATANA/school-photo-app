@@ -47,7 +47,7 @@ A diff with **no blockers** can ship if all majors are deferred to documented fo
 ## Review checklist (apply every item, every diff)
 
 1. **Spec fidelity** — does the diff implement the spec exactly? Are all `ABSTRACTIONS INTRODUCED` actually present in the diff? Is anything in `OUT OF SCOPE` accidentally included? (Spec mismatches usually `route: PLANNER`.)
-2. **Abstraction discipline** — concrete impls (S3 client, PG-specific SQL, HTTP client to ML, channel-specific notification) sit only inside their declared abstraction. No leaks into service layer, controllers, or domain.
+2. **Abstraction discipline** — concrete impls (S3 client, PG-specific SQL, HTTP client to ML, channel-specific notification) sit only inside their declared abstraction. No leaks into service layer, controllers, or domain. **This includes naming**: schema columns, entity fields, DTO fields, and class names that live outside a vendor's impl package must not carry vendor prefixes. `s3_key` on a domain entity is a leak; `blob_key` is correct. `S3KeyStrategy` placed in shared service code is a leak; `BlobKeyStrategy` is correct.
 3. **Invariants** — every photo has `event_id`; `student_class` active-uniqueness preserved; `student_event` refreshed in the same tx as `photo_student`; presigned URLs only (no proxied bytes); school-scoped queries on every read path.
 4. **DB portability** — no PG-specific syntax in JPA entities or service-layer code; PG-only features only in Flyway DDL or behind repository interfaces.
 5. **Authz** — every controller method has a verifiable access check; `AccessPolicy` predicate used for filtered reads; admin-only routes guarded; `school_id` never trusted from request body.

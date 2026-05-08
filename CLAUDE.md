@@ -77,6 +77,8 @@ PostgreSQL is the chosen DB, but a swap must remain feasible. Therefore:
 - PG-specific features (HASH partitioning, `SKIP LOCKED`, partial unique indexes, JSONB operators, `CITEXT`) live **only** in Flyway DDL or behind a repository-interface implementation.
 - JPA entities use portable types (`varchar`, not `citext`). Case-insensitive email is `lower(email)` + an indexed expression.
 - Service-layer code never calls PG-specific functions or uses PG-specific syntax.
+
+**Vendor-neutral naming rule (storage and other pluggable backends).** Database columns, entity fields, DTO fields, and class names that live outside a vendor's implementation package must NOT carry vendor prefixes. Use `blob_key` not `s3_key`, `BlobStore` not `S3Service`, `BlobKeyStrategy` not `S3KeyStrategy` (when the strategy is shared across vendors). Vendor-prefixed names are allowed only inside `storage/<vendor>/` style implementation packages where the vendor coupling is intentional. The reviewer enforces this on every diff that touches schema, entities, or shared abstractions.
 - Examples of correctly-encapsulated PG-isms:
   - `OutboxStore.claimBatch(int n)` interface; PG impl uses `SELECT … FOR UPDATE SKIP LOCKED`.
   - `PhotoQueryRepository` interface; PG impl uses `JdbcClient` with parameterised SQL that exploits partition pruning.
