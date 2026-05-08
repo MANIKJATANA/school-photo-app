@@ -68,3 +68,7 @@ Where:
 2026-05-08T13:56:30Z phase1-slice5a-student-enrolment impl iter 1 diff-produced 5 src + 2 test files; 15 new tests pass
 2026-05-08T13:58:37Z phase1-slice5a-student-enrolment review iter 1 APPROVED 0:0:0
 2026-05-08T13:59:33Z phase1-slice5a-student-enrolment review iter 1 APPROVED 0:0:0
+2026-05-08T14:32:51Z phase1-slice5b-class-teacher-assignment plan iter 1 spec-written 7 src + 2 test files; M:N with composite PK + role enum
+2026-05-08T14:35:13Z phase1-slice5b-class-teacher-assignment impl iter 1 diff-produced 7 src + 2 test files; 17 new tests pass
+2026-05-08T14:38:10Z phase1-slice5b-class-teacher-assignment review iter 1 APPROVED 0:0:1
+2026-05-08T14:38:41Z phase1-slice5b-class-teacher-assignment review iter 1 APPROVED 0:0:1
