@@ -30,3 +30,7 @@ Where:
 2026-05-08T09:04:59Z phase1-slice2a-school-and-user impl iter 1 diff-produced 8 src + 2 test files; 21/21 runnable pass, 5 Docker-skipped
 2026-05-08T09:06:56Z phase1-slice2a-school-and-user review iter 1 APPROVED 0:0:1
 2026-05-08T09:07:30Z phase1-slice2a-school-and-user review iter 1 APPROVED 0:0:1
+2026-05-08T09:20:00Z phase1-slice2b1-jwt-primitives plan iter 1 spec-written 4 src + 1 test file; sign/verify only, no filter chain
+2026-05-08T09:21:10Z phase1-slice2b1-jwt-primitives impl iter 1 diff-produced 4 src + 1 test file; 8 JWT tests pass
+2026-05-08T09:22:46Z phase1-slice2b1-jwt-primitives review iter 1 APPROVED 0:0:1
+2026-05-08T09:23:31Z phase1-slice2b1-jwt-primitives review iter 1 APPROVED 0:0:1
