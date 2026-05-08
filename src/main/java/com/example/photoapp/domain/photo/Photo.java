@@ -109,6 +109,28 @@ public class Photo {
 
     public void softDelete(Instant when) { this.deletedAt = when; }
 
+    /**
+     * Used by the upload service so the response's photo_id matches the row's
+     * id deterministically — the generated id is computed before persist,
+     * passed both into the blob key and into this setter.
+     */
+    public void assignIdForUpload(UUID photoId) {
+        if (id == null || id.eventId() == null) {
+            throw new IllegalStateException("eventId must be set before assigning photoId");
+        }
+        this.id = new PhotoId(id.eventId(), photoId);
+    }
+
+    /**
+     * Confirms a presigned-PUT upload after the server HEADs the blob. The
+     * blob's actual size is authoritative — it overwrites whatever the client
+     * claimed at initiate time.
+     */
+    public void confirmUploadedWith(long actualSizeBytes) {
+        this.uploadStatus = UploadStatus.UPLOADED;
+        this.sizeBytes = actualSizeBytes;
+    }
+
     public PhotoId getPk()       { return id; }
     public UUID    getId()       { return id.id(); }
     public UUID    getEventId()  { return id.eventId(); }

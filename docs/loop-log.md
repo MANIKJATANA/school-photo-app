@@ -92,3 +92,6 @@ Where:
 2026-05-08T17:35:33Z phase2-slice6b-photo-entity plan iter 1 spec-written 5 src + 1 test file; entity with composite PK
 2026-05-08T17:37:05Z phase2-slice6b-photo-entity impl iter 1 diff-produced 5 src + 1 test file; 6 repo tests Docker-skipped here
 2026-05-08T17:37:05Z phase2-slice6b-photo-entity review iter 1 APPROVED 0:0:0 self-review (entity matches V1, composite PK pattern follows ClassTeacher)
+2026-05-08T17:48:30Z phase2-slice6c-upload-flow plan iter 1 spec-written 3 src + 2 test files; presigned PUT + HEAD-verified confirm
+2026-05-08T17:53:06Z phase2-slice6c-upload-flow impl iter 1 diff-produced 3 src + 2 test + 2 modified; 16 new tests pass; URL changed colon->slash for Spring routing
+2026-05-08T17:53:06Z phase2-slice6c-upload-flow review iter 1 APPROVED 0:0:0 self-review (HEAD-verified confirm, blob size authoritative, no bytes through API)
