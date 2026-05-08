@@ -57,3 +57,7 @@ Where:
 2026-05-08T11:26:49Z phase1-slice4b-student-crud plan iter 2 spec-revised consume UserProvisioning in onboarding + roll_number conflict mapping
 2026-05-08T11:32:48Z phase1-slice4b-student-crud impl iter 2 diff-produced consumed UserProvisioning in onboarding, mapped roll_number conflict, removed unused dto record, cleaned up imports
 2026-05-08T11:34:51Z phase1-slice4b-student-crud review iter 2 APPROVED 0:0:0
+2026-05-08T12:10:57Z phase1-slice4c-teacher-crud plan iter 1 spec-written 3 src + 2 test files; mirrors student CRUD with TEACHER role
+2026-05-08T12:18:05Z phase1-slice4c-teacher-crud impl iter 1 diff-produced 3 src + 2 test files; 20 new tests pass
+2026-05-08T12:20:50Z phase1-slice4c-teacher-crud review iter 1 APPROVED 0:0:1
+2026-05-08T12:21:35Z phase1-slice4c-teacher-crud review iter 1 APPROVED 0:0:2
