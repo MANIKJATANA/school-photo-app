@@ -40,3 +40,7 @@ Where:
 2026-05-08T09:38:24Z phase1-slice2b2-auth-flow review iter 1 CHANGES_REQUESTED 1:0:2
 2026-05-08T09:38:24Z phase1-slice2b2-auth-flow impl iter 2 diff-produced fixed dummy hash, trimmed comments, added regression test
 2026-05-08T09:40:13Z phase1-slice2b2-auth-flow review iter 2 APPROVED 0:0:0
+2026-05-08T09:45:15Z phase1-slice3-onboarding plan iter 1 spec-written 7 src + 2 test files; atomic bootstrap, gated by onboarding key
+2026-05-08T09:47:18Z phase1-slice3-onboarding impl iter 1 diff-produced 7 src + 2 test files; 12 new tests pass
+2026-05-08T09:49:46Z phase1-slice3-onboarding review iter 1 APPROVED 0:0:2
+2026-05-08T09:50:40Z phase1-slice3-onboarding review iter 1 APPROVED 0:0:2

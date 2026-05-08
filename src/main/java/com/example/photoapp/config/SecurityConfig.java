@@ -66,6 +66,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(reg -> reg
                         .requestMatchers("/api/v1/auth/login",
                                          "/api/v1/auth/refresh",
+                                         "/api/v1/onboarding",
                                          "/actuator/health",
                                          "/actuator/info").permitAll()
                         .requestMatchers("/api/v1/webhooks/**").permitAll() // ML webhook — HMAC validated in controller
