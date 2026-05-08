@@ -44,3 +44,9 @@ Where:
 2026-05-08T09:47:18Z phase1-slice3-onboarding impl iter 1 diff-produced 7 src + 2 test files; 12 new tests pass
 2026-05-08T09:49:46Z phase1-slice3-onboarding review iter 1 APPROVED 0:0:2
 2026-05-08T09:50:40Z phase1-slice3-onboarding review iter 1 APPROVED 0:0:2
+2026-05-08T10:43:04Z phase1-slice4a-domain-entities plan iter 1 spec-written 7 src + 1 test file; entities + repos only, no endpoints
+2026-05-08T10:44:26Z phase1-slice4a-domain-entities impl iter 1 diff-produced 7 src + 1 test file; 10 new repo tests Docker-skipped here
+2026-05-08T10:46:29Z phase1-slice4a-domain-entities review iter 1 CHANGES_REQUESTED 0:2:1
+2026-05-08T10:47:28Z phase1-slice4a-domain-entities review iter 1 CHANGES_REQUESTED 0:2:1
+2026-05-08T10:47:28Z phase1-slice4a-domain-entities impl iter 2 diff-produced added teacher cross-school + klass soft-delete tests, fixed email format
+2026-05-08T10:48:04Z phase1-slice4a-domain-entities review iter 2 APPROVED 0:0:0
