@@ -34,3 +34,9 @@ Where:
 2026-05-08T09:21:10Z phase1-slice2b1-jwt-primitives impl iter 1 diff-produced 4 src + 1 test file; 8 JWT tests pass
 2026-05-08T09:22:46Z phase1-slice2b1-jwt-primitives review iter 1 APPROVED 0:0:1
 2026-05-08T09:23:31Z phase1-slice2b1-jwt-primitives review iter 1 APPROVED 0:0:1
+2026-05-08T09:30:42Z phase1-slice2b2-auth-flow plan iter 1 spec-written 6 src + 2 test files; login/refresh/me/logout endpoints, filter chain wired
+2026-05-08T09:33:08Z phase1-slice2b2-auth-flow impl iter 1 diff-produced 6 src + 2 test files; 14 new tests pass
+2026-05-08T09:36:17Z phase1-slice2b2-auth-flow review iter 1 CHANGES_REQUESTED 1:0:2
+2026-05-08T09:38:24Z phase1-slice2b2-auth-flow review iter 1 CHANGES_REQUESTED 1:0:2
+2026-05-08T09:38:24Z phase1-slice2b2-auth-flow impl iter 2 diff-produced fixed dummy hash, trimmed comments, added regression test
+2026-05-08T09:40:13Z phase1-slice2b2-auth-flow review iter 2 APPROVED 0:0:0
