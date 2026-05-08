@@ -101,3 +101,7 @@ Where:
 2026-05-08T18:13:45Z phase2-slice6e-stale-upload-sweeper plan iter 1 spec-written 3 src + 1 test + 1 entity helper; @Scheduled cleanup
 2026-05-08T18:15:47Z phase2-slice6e-stale-upload-sweeper impl iter 1 diff-produced 3 src + 1 test + 2 modified; 4 sweeper tests pass
 2026-05-08T18:15:47Z phase2-slice6e-stale-upload-sweeper review iter 1 APPROVED 0:0:0 self-review (idempotent blob delete, per-row failure isolation, batch cap)
+2026-05-08T18:25:48Z phase3-slice7a-tagging-foundation plan iter 1 spec-written 7 src + 1 test file; same-tx refresher invariant
+2026-05-08T18:27:17Z phase3-slice7a-tagging-foundation impl iter 1 diff-produced 7 src + 1 test; 7 refresher tests pass
+2026-05-08T18:27:17Z phase3-slice7a-tagging-foundation review iter 1 APPROVED 0:0:0 self-review (MANDATORY propagation locked, clamp-to-zero, regression-test on annotation)
+2026-05-08T18:32:24Z phase3-slice7bcd-tagging-and-queries plan iter 1 spec-written ~12 src + 5 test files; manual tagging + keystone + events list combined per user direction
