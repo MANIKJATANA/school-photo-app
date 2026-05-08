@@ -7,10 +7,10 @@ import com.example.photoapp.domain.user.AppUser;
 import com.example.photoapp.domain.user.Role;
 import com.example.photoapp.repository.event.EventRepository;
 import com.example.photoapp.repository.school.SchoolRepository;
-import com.example.photoapp.repository.user.AppUserRepository;
 import com.example.photoapp.security.Principal;
 import com.example.photoapp.security.jwt.AppToken;
 import com.example.photoapp.security.jwt.JwtIssuer;
+import com.example.photoapp.service.provisioning.UserProvisioning;
 import com.example.photoapp.web.auth.AuthDtos.MeResponse;
 import com.example.photoapp.web.auth.AuthDtos.TokenResponse;
 import com.example.photoapp.web.onboarding.OnboardingDtos.CreateSchoolRequest;
@@ -18,8 +18,6 @@ import com.example.photoapp.web.onboarding.OnboardingDtos.OnboardingResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,22 +37,19 @@ public class OnboardingService {
     private static final String DEFAULT_EVENT_NAME = "Uncategorised";
 
     private final SchoolRepository schools;
-    private final AppUserRepository users;
+    private final UserProvisioning userProvisioning;
     private final EventRepository events;
-    private final PasswordEncoder passwordEncoder;
     private final JwtIssuer issuer;
     private final byte[] expectedKeyBytes;
 
     public OnboardingService(SchoolRepository schools,
-                             AppUserRepository users,
+                             UserProvisioning userProvisioning,
                              EventRepository events,
-                             PasswordEncoder passwordEncoder,
                              JwtIssuer issuer,
                              @Value("${photoapp.onboarding.key}") String onboardingKey) {
         this.schools = schools;
-        this.users = users;
+        this.userProvisioning = userProvisioning;
         this.events = events;
-        this.passwordEncoder = passwordEncoder;
         this.issuer = issuer;
         this.expectedKeyBytes = onboardingKey.getBytes(StandardCharsets.UTF_8);
     }
@@ -66,17 +61,12 @@ public class OnboardingService {
         School school = new School(req.school().name(), req.school().address(), req.school().contactEmail());
         schools.save(school);
 
-        AppUser admin = new AppUser(
+        AppUser admin = userProvisioning.provision(
                 school.getId(),
                 req.admin().email(),
-                passwordEncoder.encode(req.admin().password()),
-                Role.ADMIN);
-        admin.setPhone(req.admin().phone());
-        try {
-            users.saveAndFlush(admin);
-        } catch (DataIntegrityViolationException e) {
-            throw new Errors.Conflict("A user with that email already exists in this school");
-        }
+                req.admin().password(),
+                Role.ADMIN,
+                req.admin().phone());
 
         Event defaultEvent = new Event(school.getId(), DEFAULT_EVENT_NAME, admin.getId());
         defaultEvent.setDefault(true);

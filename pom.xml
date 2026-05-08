@@ -123,6 +123,12 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
+        <!-- Jackson JSR-310 for Instant / LocalDate JSON support (not transitively in Spring Boot 4 webmvc) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- Lombok (used sparingly) -->
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -50,3 +50,10 @@ Where:
 2026-05-08T10:47:28Z phase1-slice4a-domain-entities review iter 1 CHANGES_REQUESTED 0:2:1
 2026-05-08T10:47:28Z phase1-slice4a-domain-entities impl iter 2 diff-produced added teacher cross-school + klass soft-delete tests, fixed email format
 2026-05-08T10:48:04Z phase1-slice4a-domain-entities review iter 2 APPROVED 0:0:0
+2026-05-08T11:15:23Z phase1-slice4b-student-crud plan iter 1 spec-written 4 src + 3 test files; CRUD + provisioning helper, ADMIN-only
+2026-05-08T11:21:43Z phase1-slice4b-student-crud impl iter 1 diff-produced 4 src + 3 test + 2 modified files; 21 new tests pass
+2026-05-08T11:25:34Z phase1-slice4b-student-crud review iter 1 CHANGES_REQUESTED 0:2:3
+2026-05-08T11:26:49Z phase1-slice4b-student-crud review iter 1 CHANGES_REQUESTED 0:2:3
+2026-05-08T11:26:49Z phase1-slice4b-student-crud plan iter 2 spec-revised consume UserProvisioning in onboarding + roll_number conflict mapping
+2026-05-08T11:32:48Z phase1-slice4b-student-crud impl iter 2 diff-produced consumed UserProvisioning in onboarding, mapped roll_number conflict, removed unused dto record, cleaned up imports
+2026-05-08T11:34:51Z phase1-slice4b-student-crud review iter 2 APPROVED 0:0:0

@@ -7,10 +7,10 @@ import com.example.photoapp.domain.user.AppUser;
 import com.example.photoapp.domain.user.Role;
 import com.example.photoapp.repository.event.EventRepository;
 import com.example.photoapp.repository.school.SchoolRepository;
-import com.example.photoapp.repository.user.AppUserRepository;
 import com.example.photoapp.security.jwt.JwtIssuer;
 import com.example.photoapp.security.jwt.JwtProperties;
 import com.example.photoapp.security.jwt.JwtVerifier;
+import com.example.photoapp.service.provisioning.UserProvisioning;
 import com.example.photoapp.web.onboarding.OnboardingDtos.AdminPart;
 import com.example.photoapp.web.onboarding.OnboardingDtos.CreateSchoolRequest;
 import com.example.photoapp.web.onboarding.OnboardingDtos.OnboardingResponse;
@@ -18,9 +18,6 @@ import com.example.photoapp.web.onboarding.OnboardingDtos.SchoolPart;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Field;
 import java.time.Clock;
@@ -32,7 +29,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,29 +45,30 @@ class OnboardingServiceTest {
             Duration.ofMinutes(15),
             Duration.ofDays(14));
     private final Clock clock = Clock.fixed(Instant.parse("2030-01-01T00:00:00Z"), ZoneOffset.UTC);
-    private final PasswordEncoder encoder = new BCryptPasswordEncoder(4);
     private final JwtIssuer issuer = new JwtIssuer(props, clock);
     private final JwtVerifier verifier = new JwtVerifier(props, clock);
 
     private SchoolRepository schools;
-    private AppUserRepository users;
+    private UserProvisioning userProvisioning;
     private EventRepository events;
     private OnboardingService onboarding;
 
     @BeforeEach
     void setUp() {
         schools = mock(SchoolRepository.class);
-        users = mock(AppUserRepository.class);
+        userProvisioning = mock(UserProvisioning.class);
         events = mock(EventRepository.class);
 
-        // Stub save() to assign an id (mimicking what JPA's @PrePersist does).
         when(schools.save(any())).thenAnswer(inv -> {
             School s = inv.getArgument(0);
             setId(s, UUID.randomUUID());
             return s;
         });
-        when(users.saveAndFlush(any())).thenAnswer(inv -> {
-            AppUser u = inv.getArgument(0);
+        when(userProvisioning.provision(any(), any(), any(), any(), any())).thenAnswer(inv -> {
+            UUID schoolId = inv.getArgument(0);
+            String email = inv.getArgument(1);
+            Role role = inv.getArgument(3);
+            AppUser u = new AppUser(schoolId, email, "hashed-by-provisioning", role);
             setId(u, UUID.randomUUID());
             return u;
         });
@@ -80,7 +78,7 @@ class OnboardingServiceTest {
             return e;
         });
 
-        onboarding = new OnboardingService(schools, users, events, encoder, issuer, VALID_KEY);
+        onboarding = new OnboardingService(schools, userProvisioning, events, issuer, VALID_KEY);
     }
 
     @Test
@@ -92,7 +90,6 @@ class OnboardingServiceTest {
         assertThat(resp.defaultEventId()).isNotNull();
         assertThat(resp.tokens().accessToken()).isNotBlank();
         assertThat(resp.tokens().refreshToken()).isNotBlank();
-        // Tokens parse cleanly under our JwtVerifier with the right claims.
         assertThat(verifier.verifyAccess(resp.tokens().accessToken()).userId()).isEqualTo(resp.adminUserId());
         assertThat(verifier.verifyAccess(resp.tokens().accessToken()).role()).isEqualTo(Role.ADMIN);
     }
@@ -116,23 +113,24 @@ class OnboardingServiceTest {
     }
 
     @Test
-    void duplicate_email_at_user_save_throws_conflict() {
-        doThrow(new DataIntegrityViolationException("uq violation"))
-                .when(users).saveAndFlush(any());
+    void duplicate_email_surfaced_via_user_provisioning_throws_conflict() {
+        when(userProvisioning.provision(any(), any(), any(), any(), any()))
+                .thenThrow(new Errors.Conflict("A user with that email already exists in this school"));
 
         assertThatThrownBy(() -> onboarding.bootstrapSchool(VALID_KEY, validRequest()))
                 .isInstanceOf(Errors.Conflict.class);
     }
 
     @Test
-    void admin_password_is_hashed_not_stored_plaintext() {
-        ArgumentCaptor<AppUser> captor = ArgumentCaptor.forClass(AppUser.class);
+    void admin_provisioned_with_admin_role_and_request_password() {
         onboarding.bootstrapSchool(VALID_KEY, validRequest());
 
-        verify(users).saveAndFlush(captor.capture());
-        AppUser saved = captor.getValue();
-        assertThat(saved.getPasswordHash()).isNotEqualTo(PLAIN_PASSWORD);
-        assertThat(encoder.matches(PLAIN_PASSWORD, saved.getPasswordHash())).isTrue();
+        verify(userProvisioning).provision(
+                any(UUID.class),
+                eq("admin@example.com"),
+                eq(PLAIN_PASSWORD),
+                eq(Role.ADMIN),
+                eq("555-0100"));
     }
 
     @Test
