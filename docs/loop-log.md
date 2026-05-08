@@ -61,3 +61,6 @@ Where:
 2026-05-08T12:18:05Z phase1-slice4c-teacher-crud impl iter 1 diff-produced 3 src + 2 test files; 20 new tests pass
 2026-05-08T12:20:50Z phase1-slice4c-teacher-crud review iter 1 APPROVED 0:0:1
 2026-05-08T12:21:35Z phase1-slice4c-teacher-crud review iter 1 APPROVED 0:0:2
+2026-05-08T13:38:32Z phase1-slice4d-klass-crud plan iter 1 spec-written 3 src + 2 test files; mirrors teacher CRUD minus user provisioning
+2026-05-08T13:40:31Z phase1-slice4d-klass-crud impl iter 1 diff-produced 3 src + 2 test files; 19 new tests pass
+2026-05-08T13:43:00Z phase1-slice4d-klass-crud review iter 1 APPROVED 0:0:0
